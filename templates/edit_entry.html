@@ -1,0 +1,58 @@
+<!-- templates/edit_entry.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Edit Entry</h2>
+<form action="{{ url_for('edit_entry', id=entry.id) }}" method="post" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label for="restaurantName">Restaurant Name</label>
+        <input type="text" class="form-control" id="restaurantName" name="restaurantName" value="{{ entry.restaurantName }}" required>
+        <div class="invalid-feedback">
+            Please enter the restaurant name.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="mealDescription">Meal Description</label>
+        <textarea class="form-control" id="mealDescription" name="mealDescription" required>{{ entry.mealDescription }}</textarea>
+        <div class="invalid-feedback">
+            Please enter a description of the meal.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="rating">Rating (out of 5)</label>
+        <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" value="{{ entry.rating }}" required>
+        <div class="invalid-feedback">
+            Please provide a rating between 1 and 5.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea class="form-control" id="notes" name="notes">{{ entry.notes }}</textarea>
+    </div>
+    <!-- Future implementation for photo upload -->
+    <!-- <div class="form-group">
+        <label for="photo">Upload Photo</label>
+        <input type="file" class="form-control-file" id="photo" name="photo">
+    </div> -->
+    <button type="submit" class="btn btn-success">Update Entry</button>
+</form>
+
+<script>
+    // JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

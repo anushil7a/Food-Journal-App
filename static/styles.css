@@ -1,0 +1,46 @@
+/* static/styles.css */
+
+/* Custom Styles */
+
+body {
+    padding-top: 56px;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.card-title {
+    color: #007bff;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+h2 {
+    color: #0056b3;
+}
+
+.form-control:focus {
+    border-color: #66afe9;
+    box-shadow: none;
+}
+
+.btn-success, .btn-primary {
+    width: 100px;
+}
+
+.btn-danger {
+    width: 100px;
+}
+
+.card-footer .btn {
+    margin-right: 5px;
+}

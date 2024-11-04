@@ -1,0 +1,16 @@
+[
+    {
+        "id": "003f90d9-738e-475d-ab95-e1cb27e99a41",
+        "restaurantName": "M",
+        "mealDescription": "good",
+        "rating": "5",
+        "notes": "good"
+    },
+    {
+        "id": "27e27413-cbaa-42e9-bab7-bcb0199778d1",
+        "restaurantName": "V",
+        "mealDescription": "bad",
+        "rating": "1",
+        "notes": "bad"
+    }
+]
