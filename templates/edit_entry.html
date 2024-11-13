@@ -3,7 +3,7 @@
 
 {% block content %}
 <h2>Edit Entry</h2>
-<form action="{{ url_for('edit_entry', id=entry.id) }}" method="post" class="needs-validation" novalidate>
+<form action="{{ url_for('edit_entry', id=entry.id) }}" method="post" class="needs-validation" novalidate enctype="multipart/form-data" >
     <div class="form-group">
         <label for="restaurantName">Restaurant Name</label>
         <input type="text" class="form-control" id="restaurantName" name="restaurantName" value="{{ entry.restaurantName }}" required>
@@ -29,11 +29,17 @@
         <label for="notes">Notes</label>
         <textarea class="form-control" id="notes" name="notes">{{ entry.notes }}</textarea>
     </div>
-    <!-- Future implementation for photo upload -->
-    <!-- <div class="form-group">
-        <label for="photo">Upload Photo</label>
-        <input type="file" class="form-control-file" id="photo" name="photo">
-    </div> -->
+    <div class="form-group">
+        <label for="location">Restaurant Location</label>
+        <input type="text" class="form-control" id="location" name="location" required value="{{ entry.location }}" >
+        <div class="invalid-feedback">
+            Please enter the restaurant location.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="photo">Upload Photo (location)</label>
+        <input type="file" class="form-control-file" id="photo" name="photo" accept="image/*" >
+    </div>
     <button type="submit" class="btn btn-success">Update Entry</button>
 </form>
 

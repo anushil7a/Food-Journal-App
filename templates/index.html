@@ -20,6 +20,10 @@
                         <h6 class="card-subtitle mb-2 text-muted">Rated {{ entry.rating }}/5</h6>
                         <p class="card-text"><strong>Meal Description:</strong> {{ entry.mealDescription }}</p>
                         <p class="card-text"><strong>Notes:</strong> {{ entry.notes }}</p>
+                        <p class="card-text"><strong>Location (address/details):</strong> {{ entry.location }}</p>
+                        {% if 'photo' in entry %}
+                            <img src="{{ '/static/photos/'+ entry['photo'] }}" class="photo"   >
+                        {%endif %}
                     </div>
                     <div class="card-footer">
                         <a href="{{ url_for('edit_entry', id=entry.id) }}" class="btn btn-primary" data-toggle="tooltip" title="Edit this entry">
