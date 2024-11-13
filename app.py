@@ -3,9 +3,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import json
 import uuid
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure random key in production
+UPLOAD_FOLDER = 'static/photos/'
 
 def load_entries():
     try:
@@ -35,13 +37,24 @@ def index():
 def add_entry():
     if request.method == 'POST':
         entries = load_entries()
+        filename = ''
+        if 'photo' in request.files:
+            file = request.files['photo']
+            file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.save(file_path)
+            filename = file.filename
+            print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
+
+        print(request.files)
+
         new_entry = {
             'id': str(uuid.uuid4()),
             'restaurantName': request.form['restaurantName'],
             'mealDescription': request.form['mealDescription'],
             'rating': request.form['rating'],
-            'notes': request.form['notes']
-            # 'photo': Handle photo upload in future implementation
+            'notes': request.form['notes'],
+            'location': request.form['location'],
+            'photo': filename,
         }
         entries.append(new_entry)
         save_entries(entries)
@@ -58,6 +71,15 @@ def edit_entry(id):
         entry['mealDescription'] = request.form['mealDescription']
         entry['rating'] = request.form['rating']
         entry['notes'] = request.form['notes']
+        entry['location'] = request.form['location']
+        if 'photo' in request.files:
+            file = request.files['photo']
+            entry['photo'] = file.filename
+            file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.save(file_path)
+            print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
+        print(request.files)
+
         save_entries(entries)
         flash('Entry updated successfully!', 'success')
         return redirect(url_for('index'))

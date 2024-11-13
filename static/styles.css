@@ -44,3 +44,6 @@ h2 {
 .card-footer .btn {
     margin-right: 5px;
 }
+.photo{
+    max-width:250px;
+}
