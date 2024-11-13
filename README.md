@@ -1,4 +1,7 @@
 # Food Journal App
+# test 
+# TEST 
+# tttest
 
 ## Overview
 The Food Journal App is designed to help you keep track of your dining experiences effortlessly. Record meal details, rate restaurants, and add personal notes to remember what you loved—or didn’t—about each dish. The app also lets you snap photos, log locations, and organize all your meals in one easy-to-access place. Perfect for foodies looking to curate memorable dining moments!
