@@ -1,5 +1,4 @@
 # app.py
-#edit
 from flask import Flask, render_template, request, redirect, url_for, flash
 import json
 import uuid
@@ -41,10 +40,11 @@ def add_entry():
         filename = ''
         if 'photo' in request.files:
             file = request.files['photo']
-            file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(file_path)
-            filename = file.filename
-            print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
+            if len(file.filename) > 3:
+                file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+                file.save(file_path)
+                filename = file.filename
+                print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
 
         print(request.files)
 
@@ -75,10 +75,11 @@ def edit_entry(id):
         entry['location'] = request.form['location']
         if 'photo' in request.files:
             file = request.files['photo']
-            entry['photo'] = file.filename
-            file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(file_path)
-            print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
+            if len(file.filename) > 3:
+                entry['photo'] = file.filename
+                file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+                file.save(file_path)
+                print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
         print(request.files)
 
         save_entries(entries)

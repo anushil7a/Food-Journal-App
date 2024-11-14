@@ -47,3 +47,7 @@ h2 {
 .photo{
     max-width:250px;
 }
+.map{
+max-width:90%;
+max-height:250px;
+}
