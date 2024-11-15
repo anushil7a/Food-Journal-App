@@ -1,53 +1,107 @@
-/* static/styles.css */
-
-/* Custom Styles */
-
 body {
-    padding-top: 56px;
+    padding-top: 0px;
 }
+.navbar-brand {
+    font-weight: bold;
+    margin-left: 150px;
+}
+.navbar-nav .nav-link {
+    color: white !important;
+    margin-right: 150px;
+    letter-spacing: 1px;
+    transition: .2s all;
+}
+.navbar-nav .nav-item .nav-link:hover {
+    text-decoration: underline #ee6c4d;
+    color: #98c1d9 !important;
+  }
 
 .footer {
     background-color: #f8f9fa;
-    padding: 20px 0;
+    padding: 0px 0;
     text-align: center;
 }
-
 .card-title {
-    color: #007bff;
+    color: #3d5a80;
 }
-
-.navbar-brand {
-    font-weight: bold;
+.card-title:hover {
+    color: #ee6c4d;
 }
-
 .alert {
     margin-top: 20px;
 }
-
 h2 {
-    color: #0056b3;
+    color: #ee6c4d;
 }
-
 .form-control:focus {
-    border-color: #66afe9;
+    border-color: #98c1d9;
     box-shadow: none;
 }
-
 .btn-success, .btn-primary {
     width: 100px;
 }
-
 .btn-danger {
     width: 100px;
 }
-
 .card-footer .btn {
     margin-right: 5px;
+}
+form .search-bar {
+    width: 90% !important;
+    max-width: 540px !important;
+}
+form {
+    width: 100%;
+}
+.custom-bg {
+    background-color: #3d5a80;
+    border-color: #98c1d9 !important;
+}
+.btn-outline-success {
+    background-color: #3d5a80;
+    color: white;
+    border-color: #98c1d9 !important;
+}
+.btn-outline-success:active {
+    background-color: #3d5a80 !important;
+    color: white;
+    border-color: #98c1d9 !important;
+}
+.btn-outline-success:hover {
+    background-color: #3d5a80 !important;
+    color: white;
+    border-color: #98c1d9 !important;
+}
+.btn-outline-success:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(152, 193, 217, 0.5) !important;
+    border-color: #98c1d9 !important;
+}
+.card-subtitle.text-muted {
+    color: #98c1d9 !important;
 }
 .photo{
     max-width:250px;
 }
 .map{
 max-width:90%;
-max-height:250px;
+max-height:200px;
+}
+
+.modal-footer .btn {
+    flex-shrink: 0;
+}
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+}
+.card-body .empty {
+    display: none;
+}
+.card-body .map, .card-body .photo {
+    max-width: 100%;
+    height: auto;
 }
