@@ -2,14 +2,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4">Your Entries</h2>
+<h2 class="mb-4">Entries</h2>
 
 <!-- Search Form -->
 <form method="post" class="form-inline mb-4">
-    <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search by restaurant name" aria-label="Search">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    <input class="form-control mr-sm-2 search-bar" type="search" name="search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0 ml-4" type="submit">Search</button>
 </form>
-
 {% if entries %}
     <div class="row">
         {% for entry in entries %}
@@ -17,7 +16,7 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h5 class="card-title">{{ entry.restaurantName }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Rated {{ entry.rating }}/5</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Rating: {{ entry.rating }}/5</h6>
                         <p class="card-text"><strong>Meal Description:</strong> {{ entry.mealDescription }}</p>
                         <p class="card-text"><strong>Notes:</strong> {{ entry.notes }}</p>
 <!--                        <p class="card-text"><strong>Location (address/details):</strong> {{ entry.location }}</p>-->
