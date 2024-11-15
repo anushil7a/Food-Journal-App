@@ -20,7 +20,8 @@
                         <h6 class="card-subtitle mb-2 text-muted">Rated {{ entry.rating }}/5</h6>
                         <p class="card-text"><strong>Meal Description:</strong> {{ entry.mealDescription }}</p>
                         <p class="card-text"><strong>Notes:</strong> {{ entry.notes }}</p>
-                        <p class="card-text"><strong>Location (address/details):</strong> {{ entry.location }}</p>
+<!--                        <p class="card-text"><strong>Location (address/details):</strong> {{ entry.location }}</p>-->
+                        <iframe class="map" src="{{ entry.location }}" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         {% if 'photo' in entry %}
                             <img src="{{ '/static/photos/'+ entry['photo'] }}" class="photo"   >
                         {%endif %}

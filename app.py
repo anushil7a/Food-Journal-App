@@ -41,10 +41,10 @@ def add_entry():
         if 'photo' in request.files:
             file = request.files['photo']
             if len(file.filename) > 3:
-                file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+                filename = file.filename.replace(' ','_')
+                file_path = os.path.join(UPLOAD_FOLDER, filename)
                 file.save(file_path)
-                filename = file.filename
-                print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
+                print(f"File '{filename}' saved successfully in the 'photos' directory!")
 
         print(request.files)
 
@@ -76,10 +76,11 @@ def edit_entry(id):
         if 'photo' in request.files:
             file = request.files['photo']
             if len(file.filename) > 3:
-                entry['photo'] = file.filename
-                file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+                filename = file.filename.replace(' ', '_')
+                entry['photo'] = filename
+                file_path = os.path.join(UPLOAD_FOLDER, filename)
                 file.save(file_path)
-                print(f"File '{file.filename}' saved successfully in the 'photos' directory!")
+                print(f"File '{filename}' saved successfully in the 'photos' directory!")
         print(request.files)
 
         save_entries(entries)
