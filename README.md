@@ -39,6 +39,7 @@ source venv/bin/activate
 ```bash
 pip install Flask
 pip install python3
+pip install flask-login
 ```
 ### Step 6: Run the Application
 ```bash

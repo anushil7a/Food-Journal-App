@@ -1,22 +1,61 @@
 # app.py
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 import json
 import uuid
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure random key in production
 UPLOAD_FOLDER = 'static/photos/'
 
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'  # Redirect to login page if not authenticated
+
+# User class for Flask-Login
+class User(UserMixin):
+    def __init__(self, id, username, password_hash):
+        self.id = id
+        self.username = username
+        self.password_hash = password_hash
+
+# User loader callback
+@login_manager.user_loader
+def load_user(user_id):
+    users = load_users()
+    user = users.get(user_id)
+    if user:
+        return User(user_id, user['username'], user['password_hash'])
+    return None
+
+# Function to load users from JSON file
+def load_users():
+    try:
+        with open('users.json', 'r') as f:
+            users = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        users = {}
+    return users
+
+# Function to save users to JSON file
+def save_users(users):
+    with open('users.json', 'w') as f:
+        json.dump(users, f, indent=4)
+
+# Function to load entries from JSON file
 def load_entries():
     try:
         with open('entries.json', 'r') as f:
             entries = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
-        entries = []
+        entries = {}  # Initialize as an empty dictionary
     return entries
 
+# Function to save entries to JSON file
 def save_entries(entries):
     with open('entries.json', 'w') as f:
         json.dump(entries, f, indent=4)
@@ -25,28 +64,85 @@ def save_entries(entries):
 def inject_now():
     return {'current_year': datetime.utcnow().year}
 
+# Registration route
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        users = load_users()
+        username = request.form['username']
+        password = request.form['password']
+
+        # Check if username already exists
+        if any(user['username'] == username for user in users.values()):
+            flash('Username already exists. Please choose a different one.', 'danger')
+            return redirect(url_for('register'))
+
+        # Create new user
+        user_id = str(uuid.uuid4())
+        password_hash = generate_password_hash(password)
+        users[user_id] = {'username': username, 'password_hash': password_hash}
+        save_users(users)
+        flash('Registration successful! You can now log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+# Login route
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        users = load_users()
+        username = request.form['username']
+        password = request.form['password']
+
+        # Find user by username
+        for user_id, user in users.items():
+            if user['username'] == username:
+                if check_password_hash(user['password_hash'], password):
+                    user_obj = User(user_id, username, user['password_hash'])
+                    login_user(user_obj)
+                    flash('Logged in successfully.', 'success')
+                    return redirect(url_for('index'))
+                else:
+                    flash('Invalid username or password.', 'danger')
+                    return redirect(url_for('login'))
+        flash('Invalid username or password.', 'danger')
+        return redirect(url_for('login'))
+    return render_template('login.html')
+
+# Logout route
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
+
+# Home page route
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     entries = load_entries()
+    user_entries = entries.get(current_user.id, [])
     if request.method == 'POST':
         search_query = request.form['search']
-        entries = [entry for entry in entries if search_query.lower() in entry['restaurantName'].lower()]
-    return render_template('index.html', entries=entries)
+        user_entries = [entry for entry in user_entries if search_query.lower() in entry['restaurantName'].lower()]
+    return render_template('index.html', entries=user_entries)
 
+# Add entry route
 @app.route('/add', methods=['GET', 'POST'])
+@login_required
 def add_entry():
     if request.method == 'POST':
         entries = load_entries()
+        user_entries = entries.get(current_user.id, [])
         filename = ''
         if 'photo' in request.files:
             file = request.files['photo']
-            if len(file.filename) > 3:
-                filename = file.filename.replace(' ','_')
+            if file.filename != '':
+                filename = file.filename.replace(' ', '_')
                 file_path = os.path.join(UPLOAD_FOLDER, filename)
                 file.save(file_path)
                 print(f"File '{filename}' saved successfully in the 'photos' directory!")
-
-        print(request.files)
 
         new_entry = {
             'id': str(uuid.uuid4()),
@@ -57,16 +153,23 @@ def add_entry():
             'location': request.form['location'],
             'photo': filename,
         }
-        entries.append(new_entry)
+        user_entries.append(new_entry)
+        entries[current_user.id] = user_entries
         save_entries(entries)
         flash('Entry added successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('add_entry.html')
 
+# Edit entry route
 @app.route('/edit/<id>', methods=['GET', 'POST'])
+@login_required
 def edit_entry(id):
     entries = load_entries()
-    entry = next((item for item in entries if item['id'] == id), None)
+    user_entries = entries.get(current_user.id, [])
+    entry = next((item for item in user_entries if item['id'] == id), None)
+    if not entry:
+        flash('Entry not found.', 'danger')
+        return redirect(url_for('index'))
     if request.method == 'POST':
         entry['restaurantName'] = request.form['restaurantName']
         entry['mealDescription'] = request.form['mealDescription']
@@ -75,23 +178,25 @@ def edit_entry(id):
         entry['location'] = request.form['location']
         if 'photo' in request.files:
             file = request.files['photo']
-            if len(file.filename) > 3:
+            if file.filename != '':
                 filename = file.filename.replace(' ', '_')
                 entry['photo'] = filename
                 file_path = os.path.join(UPLOAD_FOLDER, filename)
                 file.save(file_path)
                 print(f"File '{filename}' saved successfully in the 'photos' directory!")
-        print(request.files)
-
         save_entries(entries)
         flash('Entry updated successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('edit_entry.html', entry=entry)
 
+# Delete entry route
 @app.route('/delete/<id>', methods=['POST'])
+@login_required
 def delete_entry(id):
     entries = load_entries()
-    entries = [entry for entry in entries if entry['id'] != id]
+    user_entries = entries.get(current_user.id, [])
+    user_entries = [entry for entry in user_entries if entry['id'] != id]
+    entries[current_user.id] = user_entries
     save_entries(entries)
     flash('Entry deleted successfully!', 'success')
     return redirect(url_for('index'))
