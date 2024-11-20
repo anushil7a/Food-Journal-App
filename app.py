@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure random key in production
@@ -31,6 +32,21 @@ def load_user(user_id):
     if user:
         return User(user_id, user['username'], user['password_hash'])
     return None
+
+# Extracts the map's src to use in the template
+def extract_location_src(html_string):
+    """
+    Extracts the src path from an HTML-like string or returns the whole string if src is missing.
+
+    Args:
+        html_string (str): The input HTML-like string.
+
+    Returns:
+        str: The src path if found, otherwise the input string.
+    """
+    match = re.search(r'src=["\'](.*?)["\']', html_string)
+    return match.group(1) if match else html_string
+
 
 # Function to load users from JSON file
 def load_users():
@@ -126,6 +142,9 @@ def index():
     if request.method == 'POST':
         search_query = request.form['search']
         user_entries = [entry for entry in user_entries if search_query.lower() in entry['restaurantName'].lower()]
+    for entry in user_entries:
+        entry['location'] = extract_location_src(entry['location'])
+    print(user_entries)
     return render_template('index.html', entries=user_entries)
 
 # Add entry route
